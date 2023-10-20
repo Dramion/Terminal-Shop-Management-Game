@@ -1,4 +1,6 @@
 """Module containing object classes."""
+import json
+import random
 
 class Item:
     """
@@ -58,7 +60,7 @@ class Store:
         return f"{self.name} has an inventory of {self.inventory}, and a total balance "\
             f"of ${self.balance}. \nCustomers are "
 
-    def add_inv(self, item=Item):
+    def add_item(self, item=Item):
         """
         Method for adding items to the store's inventory.
         
@@ -73,3 +75,25 @@ class Store:
             self.inventory[item.name]["quantity"] = 1
         else:
             print(f"'{item}' is not a valid item.")
+
+    def new_customer(self) -> Customer:
+        """
+        Function to create a new customer using random numbers to pick random first and last names 
+        from the names.json file and create a random balance between $3.50 and $9.00.
+        
+        Returns:
+        --------
+            Instance of the class Customer(customer_name = cust_name, customer_balance = random 
+            int between 350 and 900 divided by 100 to make the balance between 3.50 and 9.00).
+        """
+        # Creates variable, names_dict(dict). containing the contents of the names.json file.
+        with open('/workspaces/codecadproj/src/files/names.json', 'r', encoding='utf-8') as file:
+            names_dict = json.load(file)
+        # Creates variable, cust_name(str). Uses randint() to get a number between 0 and the
+        # length of the "first names" & "last names" lists, subtracts one, and pulls the first/last
+        # name from it's respective list.
+        cust_name = (
+            f'{names_dict["first names"][random.randint(0, len(names_dict["first names"])) - 1]} '\
+            f'{names_dict["last names"][random.randint(0, len(names_dict["last names"])) - 1]}')
+
+        return Customer(cust_name, random.randint(350, 900) / 100)
