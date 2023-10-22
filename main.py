@@ -1,5 +1,6 @@
 """Program initializer"""
+from curses import wrapper
 import src.scripts.functions as funcPy
 
 if __name__ == "__main__":
-    store = funcPy.start()
+    wrapper(funcPy.screen_controller)

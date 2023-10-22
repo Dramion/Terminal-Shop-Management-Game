@@ -14,7 +14,7 @@ class Item:
         - item_quantity (int): how many of the item exists in the store. Might change or be 
         contained somewhere else.
     """
-    def __init__(self, item_name=str, sell_price=int, purchase_price=int, item_quantity=int):
+    def __init__(self, item_name:str, sell_price:int, purchase_price:int, item_quantity:int):
         self.name = item_name
         self.dict = {"sell price": sell_price, "purchase price": purchase_price, "quantity":
             item_quantity}
@@ -32,7 +32,7 @@ class Customer:
         - customer_name (str): string of the customer's first and last name.
         - customer_balance (float): float of the customer's balance.
     """
-    def __init__(self, customer_name=str, customer_balance=int):
+    def __init__(self, customer_name:str, customer_balance:int):
         self.name = customer_name
         self.balance = customer_balance
 
@@ -56,7 +56,7 @@ class Store:
     """
     customers = []
 
-    def __init__(self, store_name=str, store_funds=int):
+    def __init__(self, store_name:str, store_funds:int):
         self.name = store_name
         self.balance = store_funds
 
@@ -64,7 +64,7 @@ class Store:
         return f"{self.name} has an inventory of {self.inventory}, and a total balance "\
             f"of ${self.balance}. \nCustomers are "
 
-    def add_item(self, item=Item) -> None:
+    def add_item(self, item:Item) -> None:
         """
         Method for adding items to the store's inventory.
         
