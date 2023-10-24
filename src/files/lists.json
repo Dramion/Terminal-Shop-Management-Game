@@ -1,0 +1,28 @@
+{
+    "first names": ["Bob", "Phil", "Terry", "Jerry", "Sarah", "Stewart", "Rebbecah", "Kylie", "Jennifer", "Iris", "Derick", "Savannah", "Mina", "Hillary", "Ashley", "Gloria", "Jacquelyn", "Bailey", "Amanda", "Baylee", "Evelin", "Jonas", "Declan", "Jaeden", "Landyn", "Cornelius", "Jensen", "Ezequiel", "Isiah", "Emmett", "Corbin", "Kaden", "Aditya", "Ryan"], 
+    "last names": ["Johannessen", "Mason", "Roberts", "Mackson", "Brown", "Perez", "Sterlin", "Rodriguez", "Johnson", "Soto", "Bentley", "Ramsey", "Perkins", "Hudson", "Guzman", "Caldwell", "Esparza", "Nash", "Dickson", "Petersen", "Rangel", "Hardin", "Riggs", "Holloway", "Frank", "Juarez", "Oneill", "Shannon", "Reynolds", "Stott", "Flores", "Clinton"], 
+    "alphabet upper": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"], 
+    "alphabet lower": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+    "items": {
+        "Sponge": {
+            "sell price": 3.5,
+            "purchase price": 2.2,
+            "quantity": 0
+        },
+        "Soap": {
+            "sell price": 4.38,
+            "purchase price": 3.08,
+            "quantity": 0
+        },
+        "Brush": {
+            "sell price": 6.2,
+            "purchase price": 4.9,
+            "quantity": 0
+        },
+        "Milk": {
+            "sell price": 8.1,
+            "purchase price": 6.8,
+            "quantity": 0
+        }
+    }
+}

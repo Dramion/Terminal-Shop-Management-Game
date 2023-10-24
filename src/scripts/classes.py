@@ -1,6 +1,7 @@
 """Module containing object classes."""
 import json
 import random
+import curses
 
 class Item:
     """
@@ -16,8 +17,8 @@ class Item:
     """
     def __init__(self, item_name:str, sell_price:int, purchase_price:int, item_quantity:int):
         self.name = item_name
-        self.dict = {"sell price": sell_price, "purchase price": purchase_price, "quantity":
-            item_quantity}
+        self.dict = {self.name: {"sell price": sell_price, "purchase price": purchase_price,
+                                 "quantity": item_quantity}}
 
     def __repr__(self):
         return f'{self.dict["quantity"]}-{self.name}: $'\
@@ -34,10 +35,10 @@ class Customer:
     """
     def __init__(self, customer_name:str, customer_balance:int):
         self.name = customer_name
-        self.balance = customer_balance
+        self.dict = {customer_name: {"bal": customer_balance, "inv": ""}}
 
     def __repr__(self):
-        return f"{self.name} has ${self.balance} in their wallet."
+        return f"{self.dict[self.name]} has ${self.dict[self.name]['bal']} in their wallet."
 
 class Store:
     """
@@ -54,7 +55,7 @@ class Store:
         {item_name: {"sell price": sell_price, "purchase price": purchase_price, "quantity":
         item_quantity}}, {...}}
     """
-    customers = []
+    customers = {}
 
     def __init__(self, store_name:str, store_funds:int):
         self.name = store_name
@@ -78,11 +79,11 @@ class Store:
         # If item arg is of type Item and is in the inventory Dict, add the item arg's "quantity"
         # to the Inventory Dict item's "quantity".
         if isinstance(item) is Item and item.name in self.inventory:
-            self.inventory[item.name] += item.dict["quantity"]
+            self.inventory[item.name]["quantity"] += item.dict[item.name]["quantity"]
         # If item arg is of type Item and is not in the inventory Dict, add the item arg to the
         # inventory Dict.
         elif isinstance(item) is Item and item.name not in self.inventory:
-            self.inventory.update({item.name: item})
+            self.inventory.update(item.dict)
         else:
             print(f"'{item}' is not a valid item.")
 
@@ -93,13 +94,51 @@ class Store:
         created customer to the customers list.
         """
         # Creates variable, names_dict(dict). containing the contents of the names.json file.
-        with open('src/files/names.json', 'r', encoding='utf-8') as file:
-            names_dict = json.load(file)
+        with open('src/files/lists.json', 'r', encoding='utf-8') as file:
+            lists_dict = json.load(file)
         # Creates variable, cust_name(str). Uses randint() to get a number between 0 and the
         # length of the "first names" & "last names" lists, subtracts one, and pulls the first/last
         # name from it's respective list.
         cust_name = (
-            f'{names_dict["first names"][random.randint(1, len(names_dict["first names"])) - 1]} '\
-            f'{names_dict["last names"][random.randint(1, len(names_dict["last names"])) - 1]}')
+            f'{lists_dict["first names"][random.randint(1, len(lists_dict["first names"])) - 1]} '\
+            f'{lists_dict["last names"][random.randint(1, len(lists_dict["last names"])) - 1]}')
 
-        self.customers.append(Customer(cust_name, random.randint(350, 900) / 100))
+        self.customers.update(Customer(cust_name, random.randint(350, 900) / 100).dict)
+
+class SelScene:
+    """
+    _summary_
+    ### Args:
+        - y (int):
+        - spacing (int):
+        - sel_dict (dict):
+        - win (curses.window):
+    """
+    def __init__(self, y:int, spacing:int, sel_dict:dict, win:curses.window):
+        self.y = y
+        self.spacing = spacing
+        self.win = win
+        self.dict = sel_dict
+
+    def scene_builder(self, selected:str):
+        """
+        _summary_
+
+        Args:
+            selected (str): _description_
+        """
+        curr_y = self.y
+        for sel in self.dict["selections"]:
+            sel_txt = self.dict["selections"][sel]["text"]
+            if self.dict["center"] is True:
+                scene_x = self.win.getmaxyx()[1] // 2 - len(sel_txt) // 2
+            else:
+                scene_x = self.dict["x"]
+            if selected == sel:
+                self.win.addstr(curr_y, scene_x, sel_txt,
+                                curses.A_REVERSE)
+                curr_y = curr_y + self.spacing + 1
+            elif not selected == sel:
+                self.win.addstr(curr_y, scene_x, sel_txt)
+                curr_y = curr_y + self.spacing + 1
+        self.win.refresh()

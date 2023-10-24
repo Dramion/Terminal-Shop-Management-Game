@@ -1,6 +1,6 @@
 """Program initializer"""
 from curses import wrapper
-import src.scripts.functions as funcPy
+from src.scripts.windows import screen_controller
 
 if __name__ == "__main__":
-    wrapper(funcPy.screen_controller)
+    wrapper(screen_controller)
