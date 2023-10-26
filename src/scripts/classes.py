@@ -18,7 +18,7 @@ class Item:
     def __init__(self, item_name:str, sell_price:int, purchase_price:int, item_quantity:int):
         self.name = item_name
         self.dict = {self.name: {"sell price": sell_price, "purchase price": purchase_price,
-                                 "quantity": item_quantity}}
+                                 "quantity": item_quantity, "name": item_name}}
 
     def __repr__(self):
         return f'{self.dict["quantity"]}-{self.name}: $'\

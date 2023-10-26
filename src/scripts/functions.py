@@ -137,17 +137,21 @@ def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) ->
             win.refresh()
     return output
 
-def save_load(sl:str, store=None):
+def save_load(sl:str, json_f="", store=None):
+    if not "saves" in os.listdir("/"):
+        pass
+    else:
+        os.mkdir("saves")
     if sl == "s":
-        w_dict = {store.name:{"inv": store.inventory, "bal":store.balance,
-                              "customers":store.customers}}
+        w_dict = {store.name:{"bal":store.balance, "customers":store.customers,
+                              "inv": store.inventory}}
         #if f'{store.name}.json' in os.listdir("src/files"):
         with open(f'saves/{store.name}.json', 'w', encoding='utf-8') as file:
             json.dump(w_dict, file, indent=4)
     elif sl == "l":
-        with open(f'saves/{store.name}.json', 'r', encoding='utf-8') as file:
+        with open(f'saves/{json_f}', 'r', encoding='utf-8') as file:
             load_dict = json.load(file)
-        load_store = Store(load_dict[0], load_dict[0]["bal"])
-        load_store.inventory = load_dict[0]["inv"]
-        load_store.customers = load_dict[0]["customers"]
+        load_store = Store(json_f[:-5], load_dict[json_f[:-5]]["bal"])
+        load_store.inventory = load_dict[json_f[:-5]]["inv"]
+        load_store.customers = load_dict[json_f[:-5]]["customers"]
         return load_store
