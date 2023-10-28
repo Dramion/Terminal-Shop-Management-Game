@@ -1,18 +1,27 @@
-"""Module containing curses window initializers."""
+"""
+Module containing curses window initializers.
+
+This work falls under the GNU General Public License v3.0
+See https://github.com/Dramion/Codecademy-Terminal-Py-Game/blob/Testing/LICENSE 
+for more information.
+"""
 import curses
 import sys
 import os
-from .functions import menu_input, live_getstr, save_load # pylint: disable=relative-beyond-top-level
-from .classes import Item, SelScene, Store # pylint: disable=relative-beyond-top-level
+from src.scripts.functions import next_turn, menu_input, live_getstr, save_load
+from src.scripts.classes import Item, SelScene, Store
 
 stdscr = curses.initscr()
+
+player_store:Store = None
+
 sponge = Item("Sponge", 3.50, 2.20, 0)
-soap = Item("Soap", 4.38, 3.08, 0)
+soap = Item("Soap", 4.38, 3.08, 2)
 brush = Item("Brush", 6.20, 4.90, 0)
 milk = Item("Milk", 8.10, 6.80, 0)
 def screen_controller(screen=stdscr):
     """
-    _summary_
+    Initializes the main screen.
 
     ### Args:
         - screen (curses.window, optional): Screen object. Defaults to stdscr.
@@ -28,10 +37,6 @@ def screen_controller(screen=stdscr):
 def start_menu(start_menu_win=curses.newwin(20, 82, 1, 3)):
     """
     Initializes a start menu with a disclaimer, not currently in use.
-    
-    Returns:
-    -------
-        - store (Store): An instance of the store class.
     """
     yn_dict = {"arrow only":False, "center":True,"selections":
         {"yes":{"text":"(Y)es", "action": True, "input":["Y", "y"]},
@@ -73,9 +78,9 @@ def main_menu(main_menu_win=curses.newwin(20, 82, 1, 3)):
     if main_in == "load":
         load_menu()
     elif main_in == "new":
-        game_menu()
+        new_game_menu()
 
-def game_menu(game_menu_win=curses.newwin(20, 82, 1, 3)):
+def new_game_menu(new_game_win=curses.newwin(20, 82, 1, 3)):
     """
     Menu for creating a new shop, currently only used for creating a shop and immediately saving \
         it. All testing is being done using the load option in the Main Menu Window.
@@ -84,15 +89,18 @@ def game_menu(game_menu_win=curses.newwin(20, 82, 1, 3)):
         - game_menu_win (curses.window, optional): Game menu window. Defaults to curses.newwin(20,\
             82, 1, 3).
     """
-    game_menu_win.box()
-    game_menu_win.addstr(6, 82 // 2 - 29 // 2, "Please type your shop's name:")
-    game_menu_win.refresh()
-    store_name = live_getstr(8, 82 // 2 - 10 // 2, 10, game_menu_win, stdscr)
-    store = Store(store_name.capitalize(), 30)
+    global player_store #pylint: disable=global-statement
+    new_game_win.box()
+    new_game_win.addstr(6, 82 // 2 - 29 // 2, "Please type your shop's name:")
+    new_game_win.refresh()
+    store_name = live_getstr(8, 82 // 2 - 10 // 2, 10, new_game_win, stdscr)
+    player_store = Store(store_name.capitalize(), 30)
     for item in [sponge, soap, brush, milk]:
-        store.inventory.update(item.dict)
-    store.new_customer()
-    save_load("s", store=store)
+        player_store.inventory.update(item.dict)
+    for _ in range(player_store.total_quantity()):
+        player_store.new_customer()
+    del new_game_win
+    save_load("s", store=player_store)
 
 def load_menu(load_menu_win=curses.newwin(20, 82, 1, 3)):
     """
@@ -114,7 +122,10 @@ def load_menu(load_menu_win=curses.newwin(20, 82, 1, 3)):
         load_menu_scene.scene_builder(saves_list[0][:-5])
         chosen_file = menu_input(load_menu_win,load_menu_dict,load_menu_scene,stdscr)
         del load_menu_win
-        game_window(save_load("l", chosen_file))
+        global player_store #pylint: disable=global-statement
+        player_store = save_load("l", chosen_file)
+        save_load("l", chosen_file)
+        game_window()
     else:
         load_menu_win.addstr(2, 5, "Sorry, but you currently do not have any saves. "\
             "Press enter to return.")
@@ -126,21 +137,22 @@ def load_menu(load_menu_win=curses.newwin(20, 82, 1, 3)):
         del load_menu_win
         main_menu()
 
-def game_window(store:Store, game_win=curses.newwin(20, 82, 1, 3)):
+def purchase_menu(purchase_win=curses.newwin(20, 82, 1, 3)):
+    pass
+
+def game_window(game_win=curses.newwin(20, 82, 1, 3)):
     """
     Window handling the actual gameplay.
 
     ### Args:
-        - store (Store): The "Store" instance that was created during the loading or new game \
-            process.
         - game_win (curses.window, optional): Game window. Defaults to curses.newwin(20, \
             82, 1, 3).
     """
     def inv_win_update():
         item_pos = 0
         column_2 = 0
-        inv = store.inventory
-        for item in store.inventory:
+        inv = player_store.inventory
+        for item in player_store.inventory:
             item_str = f"{inv[item]['name']}(${inv[item]['sell price']}): {inv[item]['quantity']}"
             if item_pos == 0:
                 inv_win.addstr(1, len(inv_str) + 2, item_str)
@@ -163,6 +175,20 @@ def game_window(store:Store, game_win=curses.newwin(20, 82, 1, 3)):
                 inv_win.addstr(3, column_2 + item_str.find("$"),
                                f"${inv[item]['sell price']}", curses.color_pair(2))
                 item_pos += 1
+        inv_win.refresh()
+
+    def store_win_update():
+        cursor_y = 0
+        custs = player_store.customers
+        for customer in player_store.customers:
+            customer_str = f"{customer}(${custs[customer]['bal']}): "\
+                f"{custs[customer]['inv']['name']}"
+            if cursor_y < 12:
+                store_win.addstr(store_win.getmaxyx()[0] // 2 - len(custs) // 2 + cursor_y,
+                                 store_win.getmaxyx()[1] // 2 - len(customer_str) // 2,
+                                 customer_str)
+                cursor_y += 1
+        store_win.refresh()
 
     inv_win = game_win.derwin(5, 82, 0, 0)
     store_win = game_win.derwin(15, 62, 5, 0)
@@ -170,9 +196,18 @@ def game_window(store:Store, game_win=curses.newwin(20, 82, 1, 3)):
     inv_win.box()
     store_win.box()
     sel_win.box()
-    inv_str = f"{store.name} inventory:"
+    inv_str = f"{player_store.name} inventory:"
     inv_win.addstr(1, 1, inv_str)
+    game_menu_dict = {"arrow only":False, "center":True, "selections":
+        {"next": {"text":"(N)ext Turn", "action": purchase_menu, "args":[], "input":["N", "n"]},
+         "skip": {"text":"S(k)ip Turn", "action": next_turn, "args":[player_store],
+                  "input": ["K", "k"]},
+         "save": {"text": "(S)ave", "action": save_load, "args": ["s", "", player_store],
+                  "input": ["S", "s"]},
+         "main": {"text":"Main Menu", "action": main_menu, "args":[], "input":[]}}}
+    game_menu_scene = SelScene(2, 2, game_menu_dict, sel_win)
+    game_menu_scene.scene_builder("next")
     inv_win_update()
+    store_win_update()
     game_win.refresh()
-    stdscr.getch()
- 
+    menu_input(sel_win, game_menu_dict, game_menu_scene, stdscr)

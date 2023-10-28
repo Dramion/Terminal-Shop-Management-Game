@@ -1,9 +1,15 @@
-"""Module containing functions."""
+"""
+Module containing functions.
+
+This work falls under the GNU General Public License v3.0
+See https://github.com/Dramion/Codecademy-Terminal-Py-Game/blob/Testing/LICENSE
+for more information.
+"""
 import random
 import curses
 import json
 import os
-from .classes import Item, Store, SelScene # pylint: disable=relative-beyond-top-level
+from src.scripts.classes import Item, Store, SelScene
 
 def menu_input(win:curses.window, sel_dict:dict, scene:SelScene, screen:curses.window) -> str:
     """
@@ -32,15 +38,15 @@ def menu_input(win:curses.window, sel_dict:dict, scene:SelScene, screen:curses.w
                 poss_in.append(sel_input)
     def find_sel(up_down:str, curr_sel:str):
         """
-        _summary_
+        Updates the scene to display the newly selected option.
 
         ### Args:
-            - up_down (str): The key 
-            - curr_sel (str): _description_
+            - up_down (str): Which key of "KEY_UP" and "KEY_DOWN" was pressed.
+            - curr_sel (str): Which option from the menu is currently selected.
 
         Returns:
         -------
-            - curr_sel: _description_
+            - curr_sel: The option which is now selected after the up or down key was pressed.
         """
         if up_down == "KEY_DOWN" and sel_list.index(curr_sel) < len(sel_list)-1:
             curr_sel = sel_list[sel_list.index(curr_sel) + 1]
@@ -74,7 +80,8 @@ def menu_input(win:curses.window, sel_dict:dict, scene:SelScene, screen:curses.w
                 return sel_dict["selections"][curr_sel]["action"]
             else:
                 if len(sel_dict["selections"][curr_sel]["args"]) > 0:
-                    sel_dict["selections"][curr_sel]["action"](*sel_dict["selections"][curr_sel]["args"])
+                    sel_dict["selections"][curr_sel]["action"](*sel_dict["selections"][curr_sel]
+                        ["args"])
                 else:
                     sel_dict["selections"][curr_sel]["action"]()
                 cont = True
@@ -86,21 +93,32 @@ def menu_input(win:curses.window, sel_dict:dict, scene:SelScene, screen:curses.w
 
 def next_turn(store:Store) -> None:
     """
-    Function that starts the next turn. Currently adds a random number of customers between 0 and
-    10 after emptying all customers from previous turn. TODO: Handle the customer purchases before
-    removing them from the customers list.
+    Function that starts the next turn. Clears the customers in the store after removing the items
+    being bought by each customer from the store inventory and adding the item's price to the store
+    balance. Creates a random number of customers between 0 and the total store stock up to 11. 
     
     Args:
     -----
-        - store (Store): Instance of the class Store, needed for accessing the store's customers.
+        - store (Store): Instance of the class Store, needed for accessing the store's customers\
+            and inventory.
     """
-    store.customers = []
-    for _ in range(random.randint(0, 10)):
+    custs = store.customers
+    num = 0
+    if store.total_quantity >= 11:
+        num = 11
+    elif store.total_quantity < 11:
+        num = store.total_quantity
+    for customer in custs:
+        if store.inventory[custs[customer]["inv"]]["quantity"] > 0:
+            store.inventory[custs[customer]["inv"]]["quantity"] -= 1
+            store.balance += store.inventory[custs[customer]["inv"]]["sell price"]
+    store.customers.clear()
+    for _ in range(random.randint(0, num)):
         store.new_customer()
 
 def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) -> str:
     """
-    _summary_
+    An improved version of getstr() that updates the window with each key.
 
     ### Args:
         - y (int): Row of the input space.
@@ -138,6 +156,17 @@ def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) ->
     return output
 
 def save_load(sl:str, json_f="", store=None):
+    """
+    Used for saving/loading games.
+
+    Args:
+        - sl (str): Variable that contains whether "s"(save) or "l"(load) was passed.
+        - json_f (str, optional): The full "name.json" str . Defaults to "".
+        - store (Store, optional): Store object passed when attempting to save. Defaults to None.
+
+    Returns:
+        - load_store: Store returned when loading a file. No return when saving.
+    """
     if not "saves" in os.listdir("/"):
         pass
     else:

@@ -1,4 +1,10 @@
-"""Module containing object classes."""
+"""
+Module containing object classes.
+
+This work falls under the GNU General Public License v3.0
+See https://github.com/Dramion/Codecademy-Terminal-Py-Game/blob/Testing/LICENSE 
+for more information.
+"""
 import json
 import random
 import curses
@@ -65,6 +71,19 @@ class Store:
         return f"{self.name} has an inventory of {self.inventory}, and a total balance "\
             f"of ${self.balance}. \nCustomers are "
 
+    def total_quantity(self) -> int:
+        """
+        Calculates the total number of all items contained in the store's inventory.
+
+        Returns:
+        -------
+            - total (int): The total numerical stock of the store.
+        """
+        total = 0
+        for item in self.inventory.items():
+            total += item[1]["quantity"]
+        return total
+
     def add_item(self, item:Item) -> None:
         """
         Method for adding items to the store's inventory.
@@ -104,15 +123,27 @@ class Store:
             f'{lists_dict["last names"][random.randint(1, len(lists_dict["last names"])) - 1]}')
 
         self.customers.update(Customer(cust_name, random.randint(350, 900) / 100).dict)
+        item_num_dict = {}
+        num = 1
+        done = False
+        for item in self.inventory:
+            item_num_dict.update({num: item})
+            num += 1
+        while not done:
+            random_item = self.inventory[item_num_dict[random.randint(1,4)]]
+            if random_item["quantity"] > 0:
+                self.customers[cust_name]["inv"] = random_item
+                done = True
 
 class SelScene:
     """
-    _summary_
+    Creates a selectable scene at the provided window's y position which is also an arguement.
+    
     ### Args:
-        - y (int):
-        - spacing (int):
-        - sel_dict (dict):
-        - win (curses.window):
+        - y (int): Y position on the provided window.
+        - spacing (int): How many lines between each selection.
+        - sel_dict (dict): The dictionary containing the parameters for the scene.
+        - win (curses.window): Window for the scene to be written on.
     """
     def __init__(self, y:int, spacing:int, sel_dict:dict, win:curses.window):
         self.y = y
@@ -122,10 +153,11 @@ class SelScene:
 
     def scene_builder(self, selected:str):
         """
-        _summary_
+        Updates the currently selected option based off of the only arguement provided.
 
         Args:
-            selected (str): _description_
+            - selected (str): The key from the scene's dictionary that determines which option this
+                function displays as selected.
         """
         curr_y = self.y
         for sel in self.dict["selections"]:
