@@ -13,8 +13,7 @@ class Item:
     """
     Class for defining an item.
     
-    Args:
-    -----
+    ### Args:
         - item_name (str): string of the item's name.
         - sell_price (int): price for which the player can sell each item.
         - purchase_price (int): price for which the player can buy the item for their store.
@@ -34,8 +33,7 @@ class Customer:
     """
     Class for defining a customer.
     
-    Args:
-    -----
+    ### Args:
         - customer_name (str): string of the customer's first and last name.
         - customer_balance (float): float of the customer's balance.
     """
@@ -50,8 +48,7 @@ class Store:
     """
     Class for defining a store.
     
-    Args:
-    -----
+    ### Args:
         - store_name (str): string of the store's name.
         - store_funds (int): amount of money the store has.
     """
@@ -91,8 +88,7 @@ class Store:
         Currently has the functionality of adding new items that don't yet exist, maybe can
         implement player made items? In the menu?
         
-        Args:
-        -----
+        ### Args:
             - item (Item): class Item instance to be added to the store's inventory list.
         """
         # If item arg is of type Item and is in the inventory Dict, add the item arg's "quantity"
@@ -122,7 +118,7 @@ class Store:
             f'{lists_dict["first names"][random.randint(1, len(lists_dict["first names"])) - 1]} '\
             f'{lists_dict["last names"][random.randint(1, len(lists_dict["last names"])) - 1]}')
 
-        self.customers.update(Customer(cust_name, random.randint(350, 900) / 100).dict)
+        self.customers.update(Customer(cust_name, random.randint(350, 900)).dict)
         item_num_dict = {}
         num = 1
         done = False
@@ -133,7 +129,9 @@ class Store:
             random_item = self.inventory[item_num_dict[random.randint(1,4)]]
             if random_item["quantity"] > 0:
                 self.customers[cust_name]["inv"] = random_item
+                random_item["quantity"] -= 1
                 done = True
+        return cust_name
 
 class SelScene:
     """
@@ -155,7 +153,7 @@ class SelScene:
         """
         Updates the currently selected option based off of the only arguement provided.
 
-        Args:
+        ### Args:
             - selected (str): The key from the scene's dictionary that determines which option this
                 function displays as selected.
         """

@@ -97,26 +97,23 @@ def next_turn(store:Store) -> None:
     being bought by each customer from the store inventory and adding the item's price to the store
     balance. Creates a random number of customers between 0 and the total store stock up to 11. 
     
-    Args:
-    -----
+    ### Args:
         - store (Store): Instance of the class Store, needed for accessing the store's customers\
             and inventory.
     """
     custs = store.customers
     num = 0
-    if store.total_quantity >= 11:
+    if store.total_quantity() >= 11:
         num = 11
-    elif store.total_quantity < 11:
-        num = store.total_quantity
+    elif store.total_quantity() < 11:
+        num = store.total_quantity()
     for customer in custs:
-        if store.inventory[custs[customer]["inv"]]["quantity"] > 0:
-            store.inventory[custs[customer]["inv"]]["quantity"] -= 1
-            store.balance += store.inventory[custs[customer]["inv"]]["sell price"]
+        store.balance += store.inventory[custs[customer]["inv"]["name"]]["sell price"]
     store.customers.clear()
     for _ in range(random.randint(0, num)):
         store.new_customer()
 
-def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) -> str:
+def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window, number=False) -> str:
     """
     An improved version of getstr() that updates the window with each key.
 
@@ -139,13 +136,20 @@ def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) ->
     while not input_done:
         key = screen.getkey()
         if cursor_pos - x < n and not key in ["KEY_BACKSPACE", "\n"]:
-            if (key in lists_dict["alphabet upper"] or
-                  key in lists_dict["alphabet lower"] or
-                  key == " "):
-                output += key
-                win.addstr(y, cursor_pos, key)
-                win.refresh()
-                cursor_pos += 1
+            if number is False:
+                if (key in lists_dict["alphabet upper"] or
+                    key in lists_dict["alphabet lower"] or
+                    key == " "):
+                    output += key
+                    win.addstr(y, cursor_pos, key)
+                    win.refresh()
+                    cursor_pos += 1
+            elif number is True:
+                if key in lists_dict["nums"]:
+                    output += key
+                    win.addstr(y, cursor_pos, key)
+                    win.refresh()
+                    cursor_pos += 1
         elif key == "\n":
             input_done = True
         elif key == "KEY_BACKSPACE" and not cursor_pos == x:
@@ -155,16 +159,17 @@ def live_getstr(y:int, x:int, n:int, win:curses.window, screen:curses.window) ->
             win.refresh()
     return output
 
-def save_load(sl:str, json_f="", store=None):
+def save_load(sl:str, func, json_f="", store=None):
     """
     Used for saving/loading games.
 
-    Args:
+    ### Args:
         - sl (str): Variable that contains whether "s"(save) or "l"(load) was passed.
         - json_f (str, optional): The full "name.json" str . Defaults to "".
         - store (Store, optional): Store object passed when attempting to save. Defaults to None.
 
     Returns:
+    -------
         - load_store: Store returned when loading a file. No return when saving.
     """
     if not "saves" in os.listdir("/"):
@@ -177,6 +182,7 @@ def save_load(sl:str, json_f="", store=None):
         #if f'{store.name}.json' in os.listdir("src/files"):
         with open(f'saves/{store.name}.json', 'w', encoding='utf-8') as file:
             json.dump(w_dict, file, indent=4)
+        func()
     elif sl == "l":
         with open(f'saves/{json_f}', 'r', encoding='utf-8') as file:
             load_dict = json.load(file)

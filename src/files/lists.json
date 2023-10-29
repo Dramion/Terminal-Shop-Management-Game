@@ -3,25 +3,26 @@
     "last names": ["Johannessen", "Mason", "Roberts", "Mackson", "Brown", "Perez", "Sterlin", "Rodriguez", "Johnson", "Soto", "Bentley", "Ramsey", "Perkins", "Hudson", "Guzman", "Caldwell", "Esparza", "Nash", "Dickson", "Petersen", "Rangel", "Hardin", "Riggs", "Holloway", "Frank", "Juarez", "Oneill", "Shannon", "Reynolds", "Stott", "Flores", "Clinton"], 
     "alphabet upper": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"], 
     "alphabet lower": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+    "nums": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     "items": {
         "Sponge": {
-            "sell price": 3.5,
-            "purchase price": 2.2,
+            "sell price": 350,
+            "purchase price": 220,
             "quantity": 0
         },
         "Soap": {
-            "sell price": 4.38,
-            "purchase price": 3.08,
+            "sell price": 438,
+            "purchase price": 308,
             "quantity": 0
         },
         "Brush": {
-            "sell price": 6.2,
-            "purchase price": 4.9,
+            "sell price": 620,
+            "purchase price": 490,
             "quantity": 0
         },
         "Milk": {
-            "sell price": 8.1,
-            "purchase price": 6.8,
+            "sell price": 810,
+            "purchase price": 680,
             "quantity": 0
         }
     }
