@@ -8,6 +8,7 @@ for more information.
 import curses
 import sys
 import os
+import json
 from src.scripts.functions import next_turn, menu_input, live_getstr, save_load
 from src.scripts.classes import Item, SelScene, Store
 
@@ -33,28 +34,6 @@ def screen_controller(screen=stdscr):
     curses.curs_set(0)
     screen.refresh()
     main_menu()
-
-
-def start_menu(start_menu_win=curses.newwin(20, 82, 1, 3)):
-    """
-    Initializes a start menu with a disclaimer, not currently in use.
-    """
-    yn_dict = {"arrow only":False, "center":True,"selections":
-        {"yes":{"text":"(Y)es", "action": True, "input":["Y", "y"]},
-         "no":{"text":"(N)o", "action":sys.exit, "input":["N", "n"]}}}
-    start_scene = SelScene(8, 1, yn_dict, start_menu_win)
-    start_menu_win.addstr(1, 1,
-        " For this game, press the key marked in parentheses to proceed. Every time you\n"\
-        " purchase items marks the end of the turn. You may only buy one type of item and\n"\
-        "                         up to 10 of that item each turn.")
-    start_menu_win.addstr(6, start_menu_win.getmaxyx()[1] // 2 - 23 // 2, "Are you ready to begin?")
-    start_scene.scene_builder("yes")
-    start_menu_win.box()
-    start_menu_win.refresh()
-    menu_input(start_menu_win, yn_dict, start_scene, stdscr)
-    start_menu_win.clear()
-    start_menu_win.refresh()
-    del start_menu_win
 
 def main_menu(main_menu_win=curses.newwin(20, 82, 1, 3)):
     """
@@ -96,10 +75,12 @@ def new_game_menu(new_game_win=curses.newwin(20, 82, 1, 3)):
     new_game_win.refresh()
     store_name = live_getstr(8, 82 // 2 - 10 // 2, 10, new_game_win, stdscr)
     player_store = Store(store_name.capitalize(), 30)
-    for item in [sponge, soap, brush, milk]:
-        player_store.inventory.update(item.dict)
-    for _ in range(player_store.total_quantity()):
-        player_store.new_customer()
+    with open('src/files/lists.json', 'r', encoding='utf-8') as file:
+        lists_dict = json.load(file)
+        items_dict = lists_dict["items"]
+    for item in items_dict:
+        player_store.add_item(Item(item, items_dict[item]["sell price"],
+                                   items_dict[item]["purchase price"], 0))
     del new_game_win
     game_window()
 
