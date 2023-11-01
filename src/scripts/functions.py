@@ -69,6 +69,8 @@ def menu_input(win:curses.window, sel_dict:dict, scene:SelScene, screen:curses.w
                 if scr_input in sel_dict["selections"][selection]["input"]:
                     if isinstance(sel_dict["selections"][selection]["action"], bool):
                         cont = sel_dict["selections"][selection]["action"]
+                    elif isinstance(sel_dict["selections"][curr_sel]["action"], str):
+                        return sel_dict["selections"][curr_sel]["action"]
                     else:
                         sel_dict["selections"][selection]["action"]()
         elif scr_input == "KEY_UP" or scr_input == "KEY_DOWN":
