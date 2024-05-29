@@ -9,6 +9,8 @@ import json
 import random
 import curses
 
+
+#TODO Remove dictionaries where possible and assign values to internal class vars.
 class Item:
     """
     Class for defining an item.
