@@ -32,4 +32,4 @@ I would also like to request that anyone who want's to make any changes collabor
 #### Main points:
 - Disclose source code.
 - Copy of same license included with code.
-- Changes from what you received from the [Codecademy-Terminal-Py-Game Repository](https://github.com/Dramion/Codecademy-Terminal-Py-Game) must be documented.
+- Changes from what you received from the [Terminal-Shop-Management-Game Repository](https://github.com/Dramion/Terminal-Shop-Management-Game) must be documented.
