@@ -1,5 +1,5 @@
 # What is this?
-This is a "quick" terminal game where you get to run a store. Nothing too crazy, just a codecademy end of course project. I do like the concept (even though I haven't reinvented the wheel) and I do have some ideas that I would love to implement into the current design, however I can not stand making an application in the terminal. So the "better" version would likely end up being made in Godot or just with a package such as PyQt. 
+This is a "quick" terminal game where you get to run a store. Nothing too crazy, just a codecademy end of course project. I do like the concept (even though I haven't reinvented the wheel) and I do have some ideas that I would love to implement into the current design, however I can not stand my games living in the terminal. So the "better" version would likely end up being made in Godot or just with a package such as PyQt. 
 
 This project is of course up for contribution so if you just so happen to come across this and now how to make some quick changes or have some suggestions on making the docs more readable, then by all means do what you can and send in a pull request.
 
